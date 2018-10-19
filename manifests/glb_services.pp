@@ -10,8 +10,8 @@
 # Defines the global load balancing algorithm to be used.
 #
 # [*basic__all_monitors_needed*]
-# Are all the monitors required to be working in a location to mark this
-# service as alive?
+# Do all monitors assigned to a location need to report success in order for
+# it to be considered healthy?
 #
 # [*basic__autorecovery*]
 # The last location to fail will be available as soon as it recovers.
@@ -79,6 +79,11 @@
 # "monitors"=>{"description"=>"The monitors that are present in a location.",
 # "type"=>"array", "default"=>[], "uniqueItems"=>true,
 # "items"=>{"type"=>"string"}}}
+#
+# [*basic__optimistic_location_health*]
+# Is location health optimistic? Set true to treat a location as healthy if
+# any peer reports it as healthy, set false to treat a location as failed if
+# any peer reports a monitor failure.
 #
 # [*basic__peer_health_timeout*]
 # Peer reported monitor state timeout in seconds.
@@ -154,7 +159,7 @@ define brocadevtm::glb_services (
   vtmrest { "glb_services/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/5.2/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/glb_services.erb'),

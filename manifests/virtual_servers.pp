@@ -12,10 +12,6 @@
 # [*basic__bandwidth_class*]
 # The bandwidth management class that this server should use, if any.
 #
-# [*basic__bypass_data_plane_acceleration*]
-# Whether this service should, where possible, bypass data plane acceleration
-# mechanisms.
-#
 # [*basic__completion_rules*]
 # Rules that are run at the end of a transaction, in order, comma separated.
 # Type:array
@@ -78,6 +74,10 @@
 # protocol header. If enabled, the information contained in the PROXY header
 # will be available in TrafficScript. Connections that are not prefixed with a
 # valid PROXY protocol header will be discarded.
+#
+# [*basic__proxy_protocol_optional*]
+# Connections which do not include a PROXY protocol header are not rejected,
+# but are treated as ordinary non-PROXY protocol connections.
 #
 # [*basic__request_rules*]
 # Rules to be applied to incoming requests, in order, comma separated.
@@ -461,46 +461,6 @@
 #
 # [*kerberos_protocol_transition__target*]
 # The Kerberos principal name of the service this virtual server targets.
-#
-# [*l4accel__rst_on_service_failure*]
-# Whether the virtual server should send a TCP RST packet or ICMP error
-# message if a service is unavailable, or if an established connection to a
-# node fails.
-#
-# [*l4accel__service_ip_snat*]
-# Whether or not backend connections should be configured to use the ingress
-# service IP as the source IP for the back-end connection when Source NAT is
-# enabled for the pool used by the service. Requires l4accel!state_sync to be
-# enabled.
-#
-# [*l4accel__state_sync*]
-# Whether the state of active connections will be synchronized across the
-# cluster for L4Accel services, such that connections will persist in the
-# event of a failover. Note that the service must listen only on Traffic IP
-# groups for this setting to be enabled.
-#
-# [*l4accel__tcp_msl*]
-# The maximum segment lifetime, in seconds, of a TCP segment being handled by
-# the traffic manager. This setting determines for how long information about
-# a connection will be retained after receiving a two-way FIN or RST.
-#
-# [*l4accel__timeout*]
-# The number of seconds after which a connection will be closed if no further
-# packets have been received on it.
-#
-# [*l4accel__udp_count_requests*]
-# Whether a connection should be closed when the number of UDP response
-# datagrams received from the server is equal to the number of request
-# datagrams that have been sent by the client. If set to "No" the connection
-# will be closed after the first response has been received from the server.
-# This setting takes precedence over "l4accel!optimized_aging" setting.
-#
-# [*l4stateless__initial_ring_size*]
-# The initial ring size to use in the L4 stateless consistent hash table.
-#
-# [*l4stateless__num_replicas*]
-# The number of replicas per node to use in the L4 stateless consistent hash
-# table.
 #
 # [*log__always_flush*]
 # Write log data to disk immediately, rather than buffering data.
@@ -895,9 +855,6 @@
 # The virtual server should discard any UDP connection and reclaim resources
 # when no further UDP traffic has been seen within this time.
 #
-# [*udp__udp_end_transaction*]
-# When the traffic manager should consider a UDP transaction to have ended.
-#
 # [*web_cache__control_out*]
 # The "Cache-Control" header to add to every cached HTTP response, "no-cache"
 # or "max-age=600" for example.
@@ -942,7 +899,6 @@ define brocadevtm::virtual_servers (
   $basic__pool,
   $basic__port,
   $basic__bandwidth_class                    = undef,
-  $basic__bypass_data_plane_acceleration     = false,
   $basic__completion_rules                   = '[]',
   $basic__connect_timeout                    = 10,
   $basic__enabled                            = false,
@@ -1034,12 +990,6 @@ define brocadevtm::virtual_servers (
   $kerberos_protocol_transition__enabled     = false,
   $kerberos_protocol_transition__principal   = undef,
   $kerberos_protocol_transition__target      = undef,
-  $l4accel__rst_on_service_failure           = false,
-  $l4accel__service_ip_snat                  = false,
-  $l4accel__state_sync                       = false,
-  $l4accel__tcp_msl                          = 8,
-  $l4accel__timeout                          = 1800,
-  $l4accel__udp_count_requests               = false,
   $log__client_connection_failures           = false,
   $log__enabled                              = false,
   $log__filename                             = '%zeushome%/zxtm/log/%v.log',
@@ -1109,7 +1059,6 @@ define brocadevtm::virtual_servers (
   $udp__port_smp                             = false,
   $udp__response_datagrams_expected          = 1,
   $udp__timeout                              = 7,
-  $udp__udp_end_transaction                  = 'one_response',
   $web_cache__control_out                    = undef,
   $web_cache__enabled                        = false,
   $web_cache__error_page_time                = 30,
@@ -1128,7 +1077,7 @@ define brocadevtm::virtual_servers (
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/5.2/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/virtual_servers.erb'),

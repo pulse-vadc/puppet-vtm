@@ -247,11 +247,6 @@
 # [*kerberos_protocol_transition__target*]
 # The Kerberos principal name of the service this pool targets.
 #
-# [*l4accel__snat*]
-# Whether connections to the back-end nodes should appear to originate from an
-# IP address raised on the traffic manager, rather than the IP address from
-# which they were received by the traffic manager.
-#
 # [*load_balancing__algorithm*]
 # The load balancing algorithm that this pool uses to distribute load across
 # its nodes.
@@ -456,6 +451,7 @@ define brocadevtm::pools (
   $auto_scaling__data_store                 = undef,
   $auto_scaling__enabled                    = false,
   $auto_scaling__external                   = true,
+  $auto_scaling__extraargs                  = undef,
   $auto_scaling__hysteresis                 = 20,
   $auto_scaling__imageid                    = undef,
   $auto_scaling__ips_to_use                 = 'publicips',
@@ -484,7 +480,6 @@ define brocadevtm::pools (
   $http__keepalive_non_idempotent           = false,
   $kerberos_protocol_transition__principal  = undef,
   $kerberos_protocol_transition__target     = undef,
-  $l4accel__snat                            = false,
   $load_balancing__algorithm                = 'round_robin',
   $load_balancing__priority_enabled         = false,
   $load_balancing__priority_nodes           = 1,
@@ -529,7 +524,7 @@ define brocadevtm::pools (
   vtmrest { "pools/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/5.2/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/pools.erb'),

@@ -246,11 +246,6 @@
 # [*kerberos_protocol_transition__target*]
 # The Kerberos principal name of the service this pool targets.
 #
-# [*l4accel__snat*]
-# Whether connections to the back-end nodes should appear to originate from an
-# IP address raised on the traffic manager, rather than the IP address from
-# which they were received by the traffic manager.
-#
 # [*load_balancing__algorithm*]
 # The load balancing algorithm that this pool uses to distribute load across
 # its nodes.

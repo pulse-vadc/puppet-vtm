@@ -74,12 +74,6 @@
 # this to effectively "reserve" CPU(s) for other processes running on the host
 # system.
 #
-# [*basic__num_l4_children*]
-# How many L4 worker processes should be created
-#
-# [*basic__num_l7_children*]
-# How many L7 worker processes should be created
-#
 # [*basic__numberOfCPUs*]
 # The number of Application Firewall decider process to run.
 #
@@ -120,6 +114,14 @@
 # in depth' favors the former in your deployment, you may wish to enable this
 # configuration key. If you are unsure, it is recommended that you leave this
 # key disabled, which is also the default.
+#
+# [*appliance__dnscache*]
+# The DNS cache setting the appliance should use and place in
+# "/etc/systemd/resolved.conf".
+#
+# [*appliance__dnssec*]
+# The DNSSEC setting the appliance should use and place in
+# "/etc/systemd/resolved.conf".
 #
 # [*appliance__gateway_ipv4*]
 # The default gateway.
@@ -197,10 +199,6 @@
 # [*appliance__manageazureroutes*]
 # Whether or not the software manages the Azure policy routing.
 #
-# [*appliance__managedpa*]
-# Whether or not the software manages the system configuration based on Data
-# Plane Acceleration mode
-#
 # [*appliance__manageec2conf*]
 # Whether or not the software manages the EC2 config.
 #
@@ -226,7 +224,7 @@
 #
 # [*appliance__name_servers*]
 # The IP addresses of the nameservers the appliance should use and place in
-# "/etc/resolv.conf".
+# "/etc/systemd/resolved.conf".
 # Type:array
 # Properties:
 #
@@ -246,7 +244,8 @@
 # "type"=>"string"}}
 #
 # [*appliance__search_domains*]
-# The search domains the appliance should use and place in "/etc/resolv.conf".
+# The search domains the appliance should use and place in
+# "/etc/systemd/resolved.conf".
 # Type:array
 # Properties:
 #
@@ -328,12 +327,6 @@
 # Specifying 0.0.0.0 will stop the traffic manager routing software from
 # running the BGP protocol.
 #
-# [*fault_tolerance__lss_dedicated_ips*]
-# IP addresses associated with the links dedicated by the user for receiving
-# L4 state sync messages from other peers in a cluster.
-# Type:array
-# Properties:
-#
 # [*fault_tolerance__ospfv2_ip*]
 # The traffic manager's permanent IPv4 address which the routing software will
 # use for peering and transit traffic, and as its OSPF router ID.
@@ -358,34 +351,6 @@
 # The routing software log level. Values are: 0 - emergency 1 - alert 2 -
 # critical 3 - error 4 - warning 5 - notification 6 - informational 7 - debug
 # Messages with priority less or equal to the set level will be logged.
-#
-# [*iop__enable_lb*]
-# Configure Loopback modes for performance testing at different levels. Refer
-# to enum io_eal_loopback_config to understand loopback configuration
-#
-# [*iop__is_standalone*]
-# Should IOP be treated as a standalone binary
-#
-# [*iop__l4_event_driven_mode*]
-# IOP Disable L4 Event Driven Mode
-#
-# [*iop__l7_event_driven_mode*]
-# IOP Disable L7 Event Driven Mode
-#
-# [*iop__linux_interface*]
-# Should one interface be reserved as IOP MGMT interface
-#
-# [*iop__num_hugepages*]
-# Number of Kernel's hugepages
-#
-# [*iop__num_mbufs_per_mpool*]
-# IOP Number of MBUFS per MPOOL
-#
-# [*iop__send_to_linux*]
-# Traffic sent to Linux if set
-#
-# [*iop__size_hugepage*]
-# Size of each Kernel's hugepage.
 #
 # [*iptables__config_enabled*]
 # Whether the Traffic Manager should configure the iptables built-in chains to
@@ -511,6 +476,8 @@ define brocadevtm::traffic_managers (
   $basic__trafficip                       = '[]',
   $basic__updaterIP                       = '0.0.0.0',
   $appliance__disable_kpti                = false,
+  $appliance__dnscache                    = true,
+  $appliance__dnssec                      = 'no',
   $appliance__gateway_ipv4                = undef,
   $appliance__gateway_ipv6                = undef,
   $appliance__hostname                    = undef,
@@ -526,7 +493,6 @@ define brocadevtm::traffic_managers (
   $appliance__ipv6_forwarding             = false,
   $appliance__licence_agreed              = false,
   $appliance__manageazureroutes           = true,
-  $appliance__managedpa                   = true,
   $appliance__manageec2conf               = true,
   $appliance__manageiptrans               = true,
   $appliance__managereservedports         = true,
@@ -548,7 +514,6 @@ define brocadevtm::traffic_managers (
   $cluster_comms__port                    = 9080,
   $ec2__trafficips_public_enis            = '[]',
   $fault_tolerance__bgp_router_id         = undef,
-  $fault_tolerance__lss_dedicated_ips     = '[]',
   $fault_tolerance__ospfv2_ip             = undef,
   $fault_tolerance__ospfv2_neighbor_addrs = '["%gateway%"]',
   $iptables__config_enabled               = true,
@@ -583,7 +548,7 @@ define brocadevtm::traffic_managers (
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/5.2/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_managers.erb'),

@@ -58,15 +58,6 @@
 # How much delay in milliseconds between starvation checks do we allow before
 # we assume that the machine or its HyperVisor are overloaded.
 #
-# [*basic__data_plane_acceleration_cores*]
-# The number of CPU cores assigned to assist with data plane acceleration.
-# These cores are dedicated to reading and writing packets to the network
-# interface cards and distributing packets between the traffic manager
-# processes.
-#
-# [*basic__data_plane_acceleration_mode*]
-# Whether Data Plane Acceleration Mode is enabled.
-#
 # [*basic__http2_no_cipher_blacklist_check*]
 # Disable the cipher blacklist check in HTTP2 (mainly intended for testing
 # purposes)
@@ -364,18 +355,6 @@
 # under some very specific conditions. However, in general it is recommended
 # that this be set to 'false'.
 #
-# [*data_plane_acceleration__tcp_delay_ack*]
-# The time, in milliseconds, to delay sending a TCP ACK response, providing an
-# opportunity for additional data to be incorporated into the response and
-# potentially improving network performance. The setting affects TCP
-# connections handled by layer 7 services running in Data Plane Acceleration
-# mode.
-#
-# [*data_plane_acceleration__tcp_win_scale*]
-# The TCP window scale option, which configures the size of the receive window
-# for TCP connections handled by layer 7 services when running in Data Plane
-# Acceleration mode.
-#
 # [*dns__checktime*]
 # How often to check the DNS configuration for changes.
 #
@@ -486,15 +465,6 @@
 # [*fault_tolerance__igmp_interval*]
 # The interval between unsolicited periodic IGMP Membership Report messages
 # for Multi-Hosted Traffic IP Groups.
-#
-# [*fault_tolerance__l4accel_child_timeout*]
-# When running in Data Plane Acceleration Mode, how long the traffic manager
-# should wait for a status update from child processes handling L4Accel
-# services before assuming it is no longer servicing traffic.
-#
-# [*fault_tolerance__l4accel_sync_port*]
-# The port on which cluster members will transfer state information for
-# L4Accel services when running in Data Plane Acceleration Mode.
 #
 # [*fault_tolerance__monitor_interval*]
 # The frequency, in milliseconds, that each traffic manager machine should
@@ -610,12 +580,6 @@
 # [*kerberos__verbose*]
 # Whether or not a traffic manager should log all Kerberos related activity.
 # This is very verbose, and should only be used for diagnostic purposes.
-#
-# [*l4accel__max_concurrent_connections*]
-# The maximum number of concurrent connections, in millions, that can be
-# handled by each L4Accel child process. An appropriate amount of memory to
-# store this many connections will be allocated when the traffic manager
-# starts.
 #
 # [*log__error_level*]
 # The minimum severity of events/alerts that should be logged to disk. "INFO"
@@ -959,25 +923,6 @@
 # The number of minutes that the SOAP server should remain idle before
 # exiting.  The SOAP server has a short startup delay the first time a SOAP
 # request is made, subsequent SOAP requests don't have this delay.
-#
-# [*source_nat__clist_locks*]
-# The maximum locks used for SNAT clists
-#
-# [*source_nat__ip_limit*]
-# The maximum number of Source NAT IP addresses that can be used across all
-# Traffic IP Groups.
-#
-# [*source_nat__ip_local_port_range_high*]
-# The upper boundary of the port range reserved for use by the kernel. Ports
-# above this range will be used by the traffic manager for establishing
-# outgoing connections.
-#
-# [*source_nat__portmaphashtable_locks*]
-# The maximum locks used for SNAT portmap hash tables
-#
-# [*source_nat__shared_pool_size*]
-# The size of the Source NAT shared memory pool used for shared storage across
-# child processes. This value is specified as an absolute size such as "10MB".
 #
 # [*ssl__allow_rehandshake*]
 # Whether or not SSL/TLS re-handshakes should be supported. Enabling support
@@ -1471,8 +1416,6 @@ class brocadevtm::global_settings (
   $basic__chunk_size                           = 16384,
   $basic__client_first_opt                     = false,
   $basic__cluster_identifier                   = undef,
-  $basic__data_plane_acceleration_cores        = 'one',
-  $basic__data_plane_acceleration_mode         = false,
   $basic__license_servers                      = '[]',
   $basic__max_fds                              = 1048576,
   $basic__monitor_memory_size                  = 4096,
@@ -1519,8 +1462,6 @@ class brocadevtm::global_settings (
   $connection__listen_queue_size               = 0,
   $connection__max_accepting                   = 0,
   $connection__multiple_accept                 = false,
-  $data_plane_acceleration__tcp_delay_ack      = 200,
-  $data_plane_acceleration__tcp_win_scale      = 7,
   $dns__max_ttl                                = 86400,
   $dns__min_ttl                                = 86400,
   $dns__negative_expiry                        = 60,
@@ -1541,8 +1482,6 @@ class brocadevtm::global_settings (
   $fault_tolerance__frontend_check_ips         = '["%gateway%"]',
   $fault_tolerance__heartbeat_method           = 'unicast',
   $fault_tolerance__igmp_interval              = 30,
-  $fault_tolerance__l4accel_child_timeout      = 2,
-  $fault_tolerance__l4accel_sync_port          = 10240,
   $fault_tolerance__monitor_interval           = 500,
   $fault_tolerance__monitor_timeout            = 5,
   $fault_tolerance__multicast_address          = '239.100.1.1:9090',
@@ -1561,7 +1500,6 @@ class brocadevtm::global_settings (
   $java__max_connections                       = 256,
   $java__session_age                           = 86400,
   $kerberos__verbose                           = false,
-  $l4accel__max_concurrent_connections         = 1,
   $log__error_level                            = 'info',
   $log__flush_time                             = 5,
   $log__log_file                               = '%zeushome%/zxtm/log/errors',
@@ -1624,9 +1562,6 @@ class brocadevtm::global_settings (
   $session__universal_cache_size               = 32768,
   $snmp__user_counters                         = 10,
   $soap__idle_minutes                          = 10,
-  $source_nat__ip_limit                        = 16,
-  $source_nat__ip_local_port_range_high        = 10240,
-  $source_nat__shared_pool_size                = 10,
   $ssl__allow_rehandshake                      = 'safe',
   $ssl__cache_enabled                          = true,
   $ssl__cache_expiry                           = 1800,
@@ -1711,7 +1646,7 @@ class brocadevtm::global_settings (
   vtmrest { 'global_settings':
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/5.2/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/global_settings.erb'),

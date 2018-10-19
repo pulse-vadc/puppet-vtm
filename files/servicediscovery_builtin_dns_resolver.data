@@ -190,16 +190,27 @@ sub update_cache()
 
    verbose( "Starting authoritative DNS query loop for $hostname" );
    my $dig_errors = '';
-   foreach my $ns ( @NAMESERVERS ) {
-      my @records;
-      if( $ipv4 ) {
-         push( @records, 'A' );
+   my @records;
+   if( $ipv4 ) {
+      push( @records, 'A' );
+   }
+   if( $ipv6 ) {
+      push( @records, 'AAAA' );
+   }
+   foreach my $r ( @records ) {
+      if( ! scalar( @NAMESERVERS ) ) {
+         # A dummy empty nameserver so we can still use the for-loop
+         @NAMESERVERS = ( '' );
       }
-      if( $ipv6 ) {
-         push( @records, 'AAAA' );
-      }
-      foreach my $r ( @records ) {
-         my( $exit, $stdout, $stderr ) = execute( [ $dig, "\@$ns", '+noall', '+answer', $r, $hostname ] );
+      foreach my $ns ( @NAMESERVERS ) {
+         my @cmd = ( $dig,
+                     $ns ? "\@$ns" : (),
+                     '+noall',
+                     '+answer',
+                     $r,
+                     $hostname
+                   );
+         my( $exit, $stdout, $stderr ) = execute( \@cmd );
          if( $exit || !$stdout ) {
             if( !$stderr ) {
                $stderr = '';
@@ -353,27 +364,24 @@ if( !($ipv4 && $found_ipv4) && !($ipv6 && $found_ipv6) ) {
 
 # Determine nameservers (if not specified)
 if( !scalar( @NAMESERVERS ) ) {
-   my( $exit, $stdout, $stderr ) = execute( [ $dig, '+noall', '+authority', $hostname ] );
+   my( $exit, $stdout, $stderr ) = execute( [ $dig, '+short', 'NS', $hostname ] );
    if( $exit || !$stdout ) {
       if( !$stderr ) {
          $stderr = '';
       }
-      error( 409, "Dig returned error; check nameservers for reachability. $stderr" );
+      verbose( "Did not find any nameservers, using default. ($stdout,$stderr)" );
    } else {
       foreach my $line ( split( '\n', $stdout ) ) {
-         # e.g. "olympus.com.           86400   IN      NS      ns.olympus.com."
-         if( $line =~ /^\S+\s+\S+\s+\S+\s+NS\s+(.+)$/ ) {
-            push( @NAMESERVERS, $1 );
-         }
+         push( @NAMESERVERS, $line );
       }
    }
 }
-verbose( "Nameservers for $hostname are: @NAMESERVERS" );
+verbose( "Nameservers for $hostname are: @NAMESERVERS" ) if( scalar( @NAMESERVERS ) );
 
 if( ! -d $CACHE_DIR && ! mkdir( $CACHE_DIR ) ) {
    error( 403, "Could not create directory for DNS Cache" );
 }
-$CACHE_FILE = "$CACHE_DIR/${hostname}cache";
+$CACHE_FILE = "$CACHE_DIR/${hostname}cache.$SIGNATURE";
 
 my @cache_contents;
 if( open( my $cache_fh, '<', $CACHE_FILE ) ) {
