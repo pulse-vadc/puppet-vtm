@@ -65,13 +65,13 @@ configuration of that vTM instance.
 
 You could try one of these locations:
 
-+ [Brocade vTM Information](http://www.brocade.com/en/products-services/application-delivery-controllers.html "vTM Home Page")
++ [Pulse Secure - vADC Information](https://www.pulsesecure.net/vadc "vADC Home Page")
 
-+ [Brocade vTM Evaluation Signup](http://www1.brocade.com/forms/jsp/steelapp-request-trial/index.jsp> "vTM Evaluation")
++ [Pulse Secure - Try Now](https://www.pulsesecure.net/trynow/ "vADC Trial")
 
-+ [Brocade vTM Download Location](http://www1.brocade.com/forms/jsp/steelapp-traffic-manager-developer/download.jsp "vTM Downloads")
++ [Pulse Secure - vADC Documentation](https://www.pulsesecure.net/techpubs/Pulse-vADC-Solutions "vADC Documentation")
 
-+ [Brocade vTM Docker Image](https://hub.docker.com/r/tuxinvader/brocade-vtm/> "Docker Image")
++ [Pulse Secure - vTM Docker Image](https://hub.docker.com/r/pulsesecure/vtm/ "Docker Image")
 
 ## Module versioning
 
