@@ -1,7 +1,7 @@
 {
   "name": "tuxinvader-brocadevtm",
-  "version": "2.400.2",
-  "author": "mbodding @ brocade",
+  "version": "2.502.1",
+  "author": "mbodding @ Pulse Secure",
   "summary": "Configure and Manage Brocade vTM Application Delivery Controllers",
   "license": "MIT",
   "source": "https://github.com/TuxInvader/Puppet-Brocade-vTM",

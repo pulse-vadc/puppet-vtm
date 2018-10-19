@@ -71,13 +71,14 @@
 # Properties:{"location"=>{"description"=>"Location to which the associated
 # settings apply.", "type"=>"string"}, "weight"=>{"description"=>"Weight for
 # this location, for use by the weighted random algorithm.",
-# "type"=>"integer", "minimum"=>1, "maximum"=>100},
+# "type"=>"integer", "minimum"=>1, "maximum"=>100, "default"=>1},
 # "ips"=>{"description"=>"The IP addresses that are present in a location. If
 # the Global Load Balancer decides to direct a DNS query to this location,
 # then it will filter out all IPs that are not in this list.",
 # "type"=>"array", "uniqueItems"=>true, "items"=>{"type"=>"string"}},
 # "monitors"=>{"description"=>"The monitors that are present in a location.",
-# "type"=>"array", "uniqueItems"=>true, "items"=>{"type"=>"string"}}}
+# "type"=>"array", "default"=>[], "uniqueItems"=>true,
+# "items"=>{"type"=>"string"}}}
 #
 # [*basic__peer_health_timeout*]
 # Peer reported monitor state timeout in seconds.
@@ -153,7 +154,7 @@ define brocadevtm::glb_services (
   vtmrest { "glb_services/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/5.2/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/glb_services.erb'),

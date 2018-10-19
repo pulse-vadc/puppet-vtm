@@ -36,12 +36,12 @@ However if you want access to all features of your current vTM, then use the lat
 
 | vTM Version | REST API | Puppet 3.x Version | Puppet 4+ Version
 | ------ | ------ | ------ | ------ |
-| 9.9 | 3.3 | 1.33.x | - |
 | 10.4 (LTS) | 3.8 | 1.38.x | - |
 | 17.1 | 3.11 | 1.311.x | - |
 | 17.2 (LTS) | 4.0 | 1.400.x | 2.400.x |
 | 17.3 | 5.0 | 1.500.x | 2.500.x |
 | 17.4 | 5.1 | 1.501.x | 2.501.x |
+| 18.1 | 5.2 | 1.502.x | 2.502.x |
 
 See notes on Module versioning below....
 

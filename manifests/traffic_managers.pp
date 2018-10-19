@@ -26,7 +26,7 @@
 # "type"=>"string"}, "interfaces"=>{"description"=>"The order of the
 # interfaces of a network card", "type"=>"array", "uniqueItems"=>false,
 # "items"=>{"type"=>"string"}}, "label"=>{"description"=>"The labels of the
-# installed network cards", "type"=>"string",
+# installed network cards", "type"=>"string", "default"=>"-",
 # "pattern"=>"^[\\w\\.:@\\-]{1,64}$"}}
 #
 # [*basic__appliance_sysctl*]
@@ -35,8 +35,8 @@
 # Properties:{"sysctl"=>{"description"=>"The name of the kernel parameter,
 # e.g. net.ipv4.forward", "type"=>"string"},
 # "description"=>{"description"=>"Associated optional description for the
-# sysctl", "type"=>"string"}, "value"=>{"description"=>"The value of the
-# kernel parameter", "type"=>"string"}}
+# sysctl", "type"=>"string", "default"=>""}, "value"=>{"description"=>"The
+# value of the kernel parameter", "type"=>"string"}}
 #
 # [*basic__authenticationServerIP*]
 # The Application Firewall Authentication Server IP.
@@ -107,8 +107,19 @@
 # Which polling method to use.  The default for your platform is almost always
 # the optimal choice.
 #
-# [*appliance__force_hardware*]
-# Whether this machine should be recognised as a Bare-Metal Appliance.
+# [*appliance__disable_cloud_init*]
+# Whether to disable the cloud-init service
+#
+# [*appliance__disable_kpti*]
+# Whether the traffic manager appliance should run without kernel page table
+# isolation (KPTI). KPTI provides protection to prevent unprivileged software
+# from being potentially able to read arbitrary memory from the kernel (i.e.
+# the Meltdown attack, CVE-2017-5754); however this protection incurs a
+# general system performance penalty. If you are running trusted software on
+# the appliance, and the trade-off between performance at the cost of 'defense
+# in depth' favors the former in your deployment, you may wish to enable this
+# configuration key. If you are unsure, it is recommended that you leave this
+# key disabled, which is also the default.
 #
 # [*appliance__gateway_ipv4*]
 # The default gateway.
@@ -132,19 +143,21 @@
 # Type:array
 # Properties:{"name"=>{"description"=>"A network interface name.",
 # "type"=>"string"}, "autoneg"=>{"description"=>"Whether auto-negotiation
-# should be enabled for the interface.", "type"=>"boolean"},
+# should be enabled for the interface.", "type"=>"boolean", "default"=>true},
 # "bmode"=>{"description"=>"The trunking mode used for the interface (only
-# 802.3ad is currently supported).", "type"=>"string", "enum"=>["802_3ad",
-# "balance_alb"]}, "bond"=>{"description"=>"The trunk of which the interface
-# should be a member.", "type"=>"string", "pattern"=>"^(bond\\d+)?$"},
-# "duplex"=>{"description"=>"Whether full-duplex should be enabled for the
-# interface.", "type"=>"boolean"}, "mode"=>{"description"=>"Set the
-# configuriation mode of an interface, the interface name is used in place of
-# the \"*\" (asterisk).", "type"=>"string", "enum"=>["dhcp", "static"]},
+# 802.3ad is currently supported).", "type"=>"string", "default"=>"802_3ad",
+# "enum"=>["802_3ad", "balance_alb"]}, "bond"=>{"description"=>"The trunk of
+# which the interface should be a member.", "type"=>"string", "default"=>"",
+# "pattern"=>"^(bond\\d+)?$"}, "duplex"=>{"description"=>"Whether full-duplex
+# should be enabled for the interface.", "type"=>"boolean", "default"=>true},
+# "mode"=>{"description"=>"Set the configuriation mode of an interface, the
+# interface name is used in place of the \"*\" (asterisk).", "type"=>"string",
+# "default"=>"static", "enum"=>["dhcp", "static"]},
 # "mtu"=>{"description"=>"The maximum transmission unit (MTU) of the
-# interface.", "type"=>"integer", "minimum"=>68, "maximum"=>9216},
-# "speed"=>{"description"=>"The speed of the interface.", "type"=>"string",
-# "enum"=>["10", "100", "1000"]}}
+# interface.", "type"=>"integer", "minimum"=>68, "maximum"=>9216,
+# "default"=>1500}, "speed"=>{"description"=>"The speed of the interface.",
+# "type"=>"string", "default"=>"1000", "enum"=>["10", "100", "1000", "10000",
+# "100000", "40000"]}}
 #
 # [*appliance__ip*]
 # A table of network interfaces and their network settings.
@@ -152,7 +165,7 @@
 # Properties:{"name"=>{"description"=>"A network interface name.",
 # "type"=>"string"}, "addr"=>{"description"=>"The IP address for the
 # interface.", "type"=>"string"}, "isexternal"=>{"description"=>"Whether the
-# interface is externally facing.", "type"=>"boolean"},
+# interface is externally facing.", "type"=>"boolean", "default"=>false},
 # "mask"=>{"description"=>"The IP mask (netmask) for the interface.",
 # "type"=>"string"}}
 #
@@ -185,8 +198,8 @@
 # Whether or not the software manages the Azure policy routing.
 #
 # [*appliance__managedpa*]
-# Whether or not the software manages system configuration based on Data Plane
-# Acceleration mode
+# Whether or not the software manages the system configuration based on Data
+# Plane Acceleration mode
 #
 # [*appliance__manageec2conf*]
 # Whether or not the software manages the EC2 config.
@@ -194,9 +207,16 @@
 # [*appliance__manageiptrans*]
 # Whether or not the software manages the IP transparency
 #
+# [*appliance__managereservedports*]
+# Whether or not the software manages the system configuration for reserved
+# ports
+#
 # [*appliance__managereturnpath*]
 # Whether or not the software manages return path routing. If disabled, the
 # appliance won't modify iptables / rules / routes for this feature.
+#
+# [*appliance__manageservices*]
+# Whether or not the software manages the system services
 #
 # [*appliance__managesysctl*]
 # Whether or not the software manages user specified sysctl keys.
@@ -229,41 +249,6 @@
 # The search domains the appliance should use and place in "/etc/resolv.conf".
 # Type:array
 # Properties:
-#
-# [*appliance__shim_client_id*]
-# The client ID provided by the portal for this server.
-#
-# [*appliance__shim_client_key*]
-# The client key provided by the portal for this server.
-#
-# [*appliance__shim_enabled*]
-# Enable the Riverbed Cloud SteelHead discovery agent on this appliance.
-#
-# [*appliance__shim_ips*]
-# The IP addresses of the Riverbed Cloud SteelHeads to use, as a space or
-# comma separated list. If using priority load balancing this should be in
-# ascending order of priority (highest priority last).
-#
-# [*appliance__shim_load_balance*]
-# The load balancing method for selecting a Riverbed Cloud SteelHead appliance.
-#
-# [*appliance__shim_log_level*]
-# The minimum severity that the discovery agent will record to its log.
-#
-# [*appliance__shim_mode*]
-# The mode used to discover Riverbed Cloud SteelHeads in the local cloud or
-# data center.
-#
-# [*appliance__shim_portal_url*]
-# The hostname or IP address of the local portal to use.
-#
-# [*appliance__shim_proxy_host*]
-# The IP or hostname of the proxy server to use to connect to the portal.
-# Leave blank to not use a proxy server.
-#
-# [*appliance__shim_proxy_port*]
-# The port of the proxy server, must be set if a proxy server has been
-# configured.
 #
 # [*appliance__ssh_enabled*]
 # Whether or not the SSH server is enabled on the appliance.
@@ -525,6 +510,7 @@ define brocadevtm::traffic_managers (
   $basic__restServerPort                  = 0,
   $basic__trafficip                       = '[]',
   $basic__updaterIP                       = '0.0.0.0',
+  $appliance__disable_kpti                = false,
   $appliance__gateway_ipv4                = undef,
   $appliance__gateway_ipv6                = undef,
   $appliance__hostname                    = undef,
@@ -543,22 +529,14 @@ define brocadevtm::traffic_managers (
   $appliance__managedpa                   = true,
   $appliance__manageec2conf               = true,
   $appliance__manageiptrans               = true,
+  $appliance__managereservedports         = true,
   $appliance__managereturnpath            = true,
+  $appliance__manageservices              = true,
   $appliance__managevpcconf               = true,
   $appliance__name_servers                = '[]',
-  $appliance__ntpservers                  = '["0.vyatta.pool.ntp.org","1.vyatta.pool.ntp.org","2.vyatta.pool.ntp.org","3.vyatta.pool.ntp.org"]',
+  $appliance__ntpservers                  = '["0.zeus.pool.ntp.org","1.zeus.pool.ntp.org","2.zeus.pool.ntp.org","3.zeus.pool.ntp.org"]',
   $appliance__routes                      = '[]',
   $appliance__search_domains              = '[]',
-  $appliance__shim_client_id              = undef,
-  $appliance__shim_client_key             = undef,
-  $appliance__shim_enabled                = false,
-  $appliance__shim_ips                    = undef,
-  $appliance__shim_load_balance           = 'round_robin',
-  $appliance__shim_log_level              = 'notice',
-  $appliance__shim_mode                   = 'portal',
-  $appliance__shim_portal_url             = undef,
-  $appliance__shim_proxy_host             = undef,
-  $appliance__shim_proxy_port             = undef,
   $appliance__ssh_enabled                 = true,
   $appliance__ssh_password_allowed        = true,
   $appliance__ssh_port                    = 22,
@@ -605,7 +583,7 @@ define brocadevtm::traffic_managers (
   vtmrest { "traffic_managers/${name}":
     ensure   => $ensure,
     before   => Class[brocadevtm::purge],
-    endpoint => "https://${ip}:${port}/api/tm/4.0/config/active",
+    endpoint => "https://${ip}:${port}/api/tm/5.2/config/active",
     username => $user,
     password => $pass,
     content  => template('brocadevtm/traffic_managers.erb'),
