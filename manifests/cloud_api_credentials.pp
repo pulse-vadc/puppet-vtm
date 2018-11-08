@@ -1,4 +1,4 @@
-# === Define: brocadevtm::cloud_api_credentials
+# === Define: pulsevtm::cloud_api_credentials
 #
 # Cloud Credentials
 # Cloud credentials used in cloud API calls
@@ -33,20 +33,20 @@
 #
 # === Examples
 #
-# brocadevtm::cloud_api_credentials { 'example':
+# pulsevtm::cloud_api_credentials { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::cloud_api_credentials (
+define pulsevtm::cloud_api_credentials (
   $ensure,
   $basic__api_server        = undef,
   $basic__cloud_api_timeout = 200,
@@ -56,26 +56,26 @@ define brocadevtm::cloud_api_credentials (
   $basic__script            = undef,
   $basic__update_interval   = 30,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring cloud_api_credentials ${name}")
   vtmrest { "cloud_api_credentials/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/cloud_api_credentials.erb'),
+    content  => template('pulsevtm/cloud_api_credentials.erb'),
     type     => 'application/json',
     internal => 'cloud_api_credentials',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

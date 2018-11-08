@@ -1,4 +1,4 @@
-# === Define: brocadevtm::action_programs
+# === Define: pulsevtm::action_programs
 #
 # Action Program
 # This is a program or script that can be referenced and used by actions of
@@ -8,41 +8,41 @@
 #
 # === Examples
 #
-# brocadevtm::action_programs { 'example':
+# pulsevtm::action_programs { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::action_programs (
+define pulsevtm::action_programs (
   $ensure,
   $content,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring action_programs ${name}")
   vtmrest { "action_programs/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => $brocadevtm::debug,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

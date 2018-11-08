@@ -1,4 +1,4 @@
-# === Define: brocadevtm::locations
+# === Define: pulsevtm::locations
 #
 # Location
 # These are geographic locations as used by *Global Load Balancing* services.
@@ -25,7 +25,7 @@
 #
 # === Examples
 #
-# brocadevtm::locations { 'example':
+# pulsevtm::locations { 'example':
 #     ensure => present,
 #     basic__id => 8888
 # }
@@ -33,13 +33,13 @@
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::locations (
+define pulsevtm::locations (
   $ensure,
   $basic__id,
   $basic__latitude  = 0.0,
@@ -47,26 +47,26 @@ define brocadevtm::locations (
   $basic__note      = undef,
   $basic__type      = 'config',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring locations ${name}")
   vtmrest { "locations/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/locations.erb'),
+    content  => template('pulsevtm/locations.erb'),
     type     => 'application/json',
     internal => 'locations',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

@@ -1,4 +1,4 @@
-# === Define: brocadevtm::custom
+# === Define: pulsevtm::custom
 #
 # Custom configuration set
 # Custom configuration sets store arbitrary named values. These values can be
@@ -15,43 +15,43 @@
 #
 # === Examples
 #
-# brocadevtm::custom { 'example':
+# pulsevtm::custom { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::custom (
+define pulsevtm::custom (
   $ensure,
   $basic__string_lists = '[]',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring custom ${name}")
   vtmrest { "custom/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/custom.erb'),
+    content  => template('pulsevtm/custom.erb'),
     type     => 'application/json',
     internal => 'custom',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

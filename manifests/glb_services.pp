@@ -1,4 +1,4 @@
-# === Define: brocadevtm::glb_services
+# === Define: pulsevtm::glb_services
 #
 # GLB Service
 # A global load balancing service is used by a virtual server to modify DNS
@@ -112,20 +112,20 @@
 #
 # === Examples
 #
-# brocadevtm::glb_services { 'example':
+# pulsevtm::glb_services { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::glb_services (
+define pulsevtm::glb_services (
   $ensure,
   $basic__algorithm              = 'hybrid',
   $basic__all_monitors_needed    = true,
@@ -147,26 +147,26 @@ define brocadevtm::glb_services (
   $log__filename                 = '%zeushome%/zxtm/log/services/%g.log',
   $log__format                   = '%t, %s, %l, %q, %g, %n, %d, %a',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring glb_services ${name}")
   vtmrest { "glb_services/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/glb_services.erb'),
+    content  => template('pulsevtm/glb_services.erb'),
     type     => 'application/json',
     internal => 'glb_services',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

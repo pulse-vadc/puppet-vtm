@@ -1,10 +1,10 @@
-# === class: brocadevtm::monitors_rtsp
+# === class: pulsevtm::monitors_rtsp
 #
 # This class is a direct implementation of brocadvtm::monitors
 #
 # Please refer to the documentation in that module for more information
 #
-class brocadevtm::monitors_rtsp (
+class pulsevtm::monitors_rtsp (
   $ensure                = present,
   $basic__back_off       = true,
   $basic__delay          = 5,
@@ -36,26 +36,26 @@ class brocadevtm::monitors_rtsp (
   $tcp__write_string     = undef,
   $udp__accept_all       = false,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring monitors_rtsp ${name}")
   vtmrest { 'monitors/RTSP':
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/monitors.erb'),
+    content  => template('pulsevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors_rtsp',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

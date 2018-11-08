@@ -1,4 +1,4 @@
-# === Define: brocadevtm::persistence
+# === Define: pulsevtm::persistence
 #
 # Session Persistence Class
 # A session persistence class is used to identify the session a new connection
@@ -40,20 +40,20 @@
 #
 # === Examples
 #
-# brocadevtm::persistence { 'example':
+# pulsevtm::persistence { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::persistence (
+define pulsevtm::persistence (
   $ensure,
   $basic__cookie                  = undef,
   $basic__delete                  = true,
@@ -64,26 +64,26 @@ define brocadevtm::persistence (
   $basic__type                    = 'ip',
   $basic__url                     = undef,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring persistence ${name}")
   vtmrest { "persistence/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/persistence.erb'),
+    content  => template('pulsevtm/persistence.erb'),
     type     => 'application/json',
     internal => 'persistence',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

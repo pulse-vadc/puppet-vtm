@@ -1,4 +1,4 @@
-# === Define: brocadevtm::monitors
+# === Define: pulsevtm::monitors
 #
 # Monitor
 # Monitors check important remote services are running, by periodically
@@ -134,20 +134,20 @@
 #
 # === Examples
 #
-# brocadevtm::monitors { 'example':
+# pulsevtm::monitors { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::monitors (
+define pulsevtm::monitors (
   $ensure,
   $basic__back_off       = true,
   $basic__delay          = 3,
@@ -179,26 +179,26 @@ define brocadevtm::monitors (
   $tcp__write_string     = undef,
   $udp__accept_all       = false,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring monitors ${name}")
   vtmrest { "monitors/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/monitors.erb'),
+    content  => template('pulsevtm/monitors.erb'),
     type     => 'application/json',
     internal => 'monitors',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

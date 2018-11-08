@@ -1,10 +1,10 @@
-# === class: brocadevtm::event_types_infrastructure_problem_resolved
+# === class: pulsevtm::event_types_infrastructure_problem_resolved
 #
 # This class is a direct implementation of brocadvtm::event_types
 #
 # Please refer to the documentation in that module for more information
 #
-class brocadevtm::event_types_infrastructure_problem_resolved (
+class pulsevtm::event_types_infrastructure_problem_resolved (
   $ensure                       = present,
   $basic__actions               = '[]',
   $basic__built_in              = true,
@@ -39,26 +39,26 @@ class brocadevtm::event_types_infrastructure_problem_resolved (
   $zxtms__event_tags            = '[]',
   $zxtms__objects               = '[]',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring event_types_infrastructure_problem_resolved ${name}")
   vtmrest { 'event_types/Infrastructure%20Problem%20Resolved':
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/event_types.erb'),
+    content  => template('pulsevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types_infrastructure_problem_resolved',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

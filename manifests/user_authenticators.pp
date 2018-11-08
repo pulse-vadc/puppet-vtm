@@ -1,4 +1,4 @@
-# === Define: brocadevtm::user_authenticators
+# === Define: pulsevtm::user_authenticators
 #
 # User Authenticator
 # A user authenticator is used to allow access to the UI and REST API by
@@ -143,7 +143,7 @@
 #
 # === Examples
 #
-# brocadevtm::user_authenticators { 'example':
+# pulsevtm::user_authenticators { 'example':
 #     ensure => present,
 #     basic__type => 'foo'
 # }
@@ -151,13 +151,13 @@
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::user_authenticators (
+define pulsevtm::user_authenticators (
   $ensure,
   $basic__type,
   $basic__description          = undef,
@@ -193,26 +193,26 @@ define brocadevtm::user_authenticators (
   $tacacs_plus__server         = undef,
   $tacacs_plus__timeout        = 30,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring user_authenticators ${name}")
   vtmrest { "user_authenticators/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/user_authenticators.erb'),
+    content  => template('pulsevtm/user_authenticators.erb'),
     type     => 'application/json',
     internal => 'user_authenticators',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

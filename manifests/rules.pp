@@ -1,4 +1,4 @@
-# === Define: brocadevtm::rules
+# === Define: pulsevtm::rules
 #
 # Rule
 # TrafficScript rules allow traffic inspection and modification.
@@ -7,41 +7,41 @@
 #
 # === Examples
 #
-# brocadevtm::rules { 'example':
+# pulsevtm::rules { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::rules (
+define pulsevtm::rules (
   $ensure,
   $content,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring rules ${name}")
   vtmrest { "rules/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => $brocadevtm::debug,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

@@ -1,10 +1,10 @@
-# === class: brocadevtm::actions_e_mail
+# === class: pulsevtm::actions_e_mail
 #
 # This class is a direct implementation of brocadvtm::actions
 #
 # Please refer to the documentation in that module for more information
 #
-class brocadevtm::actions_e_mail (
+class pulsevtm::actions_e_mail (
   $ensure                      = present,
   $basic__note                 = undef,
   $basic__syslog_msg_len_limit = 1024,
@@ -30,26 +30,26 @@ class brocadevtm::actions_e_mail (
   $trap__username              = undef,
   $trap__version               = 'snmpv1',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring actions_e_mail ${name}")
   vtmrest { 'actions/E-Mail':
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/actions.erb'),
+    content  => template('pulsevtm/actions.erb'),
     type     => 'application/json',
     internal => 'actions_e_mail',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

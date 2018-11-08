@@ -1,4 +1,4 @@
-# === class: brocadevtm::application_firewall
+# === class: pulsevtm::application_firewall
 #
 # Pulse Secure Virtual Web Application Firewall
 # The "conf/zeusafm.conf" file contains configuration files for the
@@ -12,42 +12,42 @@
 #
 # === Examples
 #
-# class {'brocadevtm::application_firewall':
+# class {'pulsevtm::application_firewall':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-class brocadevtm::application_firewall (
+class pulsevtm::application_firewall (
   $ensure  = present,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring application_firewall ${name}")
   vtmrest { 'application_firewall':
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/application_firewall.erb'),
+    content  => template('pulsevtm/application_firewall.erb'),
     type     => 'application/json',
     internal => 'application_firewall',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

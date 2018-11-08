@@ -143,11 +143,11 @@ module BrocadeREST
 			output.puts("#")
 			output.puts("# === Authors")
 			output.puts("#")
-			output.puts("# Mark Boddington <mbodding@brocade>")
+			output.puts("#  Pulse Secure <puppet-vadc@pulsesecure.net>")
 			output.puts("#")
 			output.puts("# === Copyright")
 			output.puts("#")
-			output.puts("# Copyright 2015 Brocade")
+			output.puts("# Copyright 2018 Pulse Secure")
 			output.puts("#")
 
 			output.close()

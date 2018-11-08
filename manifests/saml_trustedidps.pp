@@ -1,4 +1,4 @@
-# === Define: brocadevtm::saml_trustedidps
+# === Define: pulsevtm::saml_trustedidps
 #
 # Trusted SAML Identity Provider
 # Configuration for SAML IDP trust relationships.
@@ -22,7 +22,7 @@
 #
 # === Examples
 #
-# brocadevtm::saml_trustedidps { 'example':
+# pulsevtm::saml_trustedidps { 'example':
 #     ensure => present,
 #     basic__certificate => 'foo'
 #     basic__entity_id => 'foo'
@@ -32,13 +32,13 @@
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::saml_trustedidps (
+define pulsevtm::saml_trustedidps (
   $ensure,
   $basic__certificate,
   $basic__entity_id,
@@ -46,26 +46,26 @@ define brocadevtm::saml_trustedidps (
   $basic__add_zlib_header = false,
   $basic__strict_verify   = true,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring saml_trustedidps ${name}")
   vtmrest { "saml/trustedidps/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/saml_trustedidps.erb'),
+    content  => template('pulsevtm/saml_trustedidps.erb'),
     type     => 'application/json',
     internal => 'saml_trustedidps',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

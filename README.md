@@ -37,11 +37,11 @@ However if you want access to all features of your current vTM, then use the lat
 | vTM Version | REST API | Puppet 3.x Version | Puppet 4+ Version
 | ------ | ------ | ------ | ------ |
 | 10.4 (LTS) | 3.8 | 1.38.x | - |
-| 17.1 | 3.11 | 1.311.x | - |
 | 17.2 (LTS) | 4.0 | 1.400.x | 2.400.x |
 | 17.3 | 5.0 | 1.500.x | 2.500.x |
 | 17.4 | 5.1 | 1.501.x | 2.501.x |
 | 18.1 | 5.2 | 1.502.x | 2.502.x |
+| 18.2 | 6.0 | 1.600.x | 2.600.x |
 
 See notes on Module versioning below....
 
@@ -92,15 +92,15 @@ Eg.
 
 ## Installation 
 
-    puppet module install tuxinvader-brocadevtm
+    puppet module install pulse-pulsevtm
 
-    puppet module install tuxinvader-brocadevtm -v 1.35.0
+    puppet module install pulse-pulsevtm -v 1.35.0
 
-    puppet module install tuxinvader-brocadevtm -v '>=1.35.0 <1.36.0'
+    puppet module install pulse-pulsevtm -v '>=1.35.0 <1.36.0'
 
-## Class brocadevtm (init.pp)
+## Class pulsevtm (init.pp)
 
-When declaring your brocadevtm class, you must provide a `rest_user` and `rest_pass` parameter. All other parameters are optional.
+When declaring your pulsevtm class, you must provide a `rest_user` and `rest_pass` parameter. All other parameters are optional.
 
     Defaults:
       rest_user         = undef
@@ -125,22 +125,22 @@ Simple web service example. Uses a single VIP with two virtual servers:
 HTTP and HTTPS. The HTTPS service does SSL offload, and both use the
 same server pool.
 
-    class { 'brocadevtm':
+    class { 'pulsevtm':
        rest_user   => 'puppet', 
        rest_pass   => 'master',
        rest_ip     => '10.1.1.22',
     }
     
-    include brocadevtm::global_settings
+    include pulsevtm::global_settings
 
-    brocadevtm::traffic_ip_groups { 'Web%20VIP':
+    pulsevtm::traffic_ip_groups { 'Web%20VIP':
        ensure             => present,
        basic__enabled     => true,
        basic__ipaddresses => ["10.1.1.10"],
        basic__machines    => ["vtm1.internal.local"],
     }
 
-    brocadevtm::virtual_servers { 'WebService':
+    pulsevtm::virtual_servers { 'WebService':
        ensure                       => present,
        basic__enabled               => true,
        basic__listen_on_any         => false,
@@ -149,7 +149,7 @@ same server pool.
        basic__port                  => 80,
     }
     
-    brocadevtm::virtual_servers { 'WebService%20SSL':
+    pulsevtm::virtual_servers { 'WebService%20SSL':
        ensure                       => present,
        basic__enabled               => true,
        basic__listen_on_any         => false,
@@ -160,13 +160,13 @@ same server pool.
        ssl__server_cert_default     => 'TEST-CERT',
     }
 
-    brocadevtm::pools { 'WebPool':
+    pulsevtm::pools { 'WebPool':
        ensure             => present,
        basic__nodes_table => '[{"node":"10.1.1.1:80","priority":1,"state":"active","weight":1}]',
     }
     
     
-    brocadevtm::ssl_server_keys { 'TEST-CERT': 
+    pulsevtm::ssl_server_keys { 'TEST-CERT': 
        ensure         => present,
        basic__note    => '',
        basic__private => '-----BEGIN RSA PRIVATE KEY-----\nMIIEpAIBAAKCAQEAsiZD53KCrcN3r4yAW6GwkITYEQyzg1bbDP8fiRvaWJxOgRtE\n/8E4KRDdeqOCuV1YNuLaTsfCkF34T4pvI00wZ5lSdXBnVrEie49ip7z0QNQ/W4mv\nDzkDQ/Och1lRevflAhJUfgiVizCxDbxJfR6oSip3RAeGarBIhp7TlfLKQj7YdnIy\nFROcHIMkLZ7aq7tUzVvcGonz5YXrmDDKFoGvbaJnNC0SAiM0aJIomOlexQmL4cgI\nhQQ1YlrF9hnulSbZN20zNz8fSeJ1UmyUgrYqLgzLXUb54pqK1aGg4rQNIqwoAbyq\nibqzc2rO/o6MXgEb9zzFwAyHI38nptE7OdiC+wIDAQABAoIBAEk98iz1p0RJWKuT\n2DHUCANimnJoBmW5D9YIDa8RBHPpz1zFGVkM10oK5QPGtbf/6ISoP5ikCBnSiIQr\nJgYddgkhwAUIcXPy33ptOOI9jS4aFPJNaOuZRP5q6a+7yQQFZuGzJ4mpfdH78s7y\n2kPWltnnG6GcdmbmkurF4beEWiNhgsex2hLhhj20oVUaGF1BGMdrp20vYE496B52\n4Wuax9lfFoFuv8FAz96EZQOQS6J1Wf+o0qqZYNDaBRI5wi3EjrNpcEHhELp9eHeG\nnFwDgQD15HyK2Qio4ig3T386OTUGT/FCNMxqT3wDn4ov+kTFtDoI+2qvJ/l6vULv\n20f50AECgYEA6f7K1jVb7nNLwUjPld0azXbQgE3mdlwJVI8urz80JLQwKckg53tP\ngol8NaZOxo7gQlML/5ltK/y5cW6B2JhxjFtNoAAzNNBmGTRvLpLK3HHGEfVRVexZ\n8ZmssEzG49Xk6l1A7O+UWgqFUMlLBcYFKEvvGS8efcXBLwOV7G3EXxsCgYEAwucK\nJ4jN8ECtDuMHY0sKbbfLXpqPS7KMfdWio1SaR1ctEos5wrKaX3vG3Zbiz6weYCko\ntNI9ioQVQ7D0Uc+lhhhlxeHAVnNFJhpZowYdf44mI/LCW2pga3dOZ9vDRqWP29KG\nUwzH1RfXPtZBqMC5vPHd42kAGgGXwBvPZChOSaECgYEAiNjyV4StVy8mxsuGW+cL\nnc428lKczevVqRZz/xm/rReUc1ulWrvLLFSrx9STjZxRm3hmM/3O00LiUWyHk9zT\ny3o6U7DKQcD/dQ4tV9eRvIrtg+MsxkuL7rgpPpIoX2bgkhAnwGn9IQu2HCEdNysw\nKPj/xILCGlxlNtGqBLPNfLECgYEAlYqHtAW3XRuCrOVsibbN7ZkTpSaZw87fFL2R\n6BfFt+8fWhcQ3l4DLDfgQay/oe/B7q4l2XdmWJ03Y5SmIQ9dRSH7FHU+Chave6jE\nFd1fTLtYcESW82UPTeVgdzebAN2PH27MOXSY7ts3/7KM9lnJKTu6r/2kYk/Oi0vL\nOGHkj4ECgYBaxw/qFIMWAvi8r84cbUG/PYivHeJNJ53EhXE6UZPxi6QuVhlbitri\nHk6SP443RCdjAR9IiZoDQkl+yW0z86ZShJYXF+1JFQU+ftsRzCtfx2XLD5dQO5qn\nleXIH8z/4lUuPMyBw5bGj9eRXat7/SI2W6cuksMHLIMBiAognmdvRw==\n-----END RSA PRIVATE KEY-----\n',
@@ -338,11 +338,11 @@ The tool generates manifests by walking the API. Any types it finds (eg
 Virtual Servers, Pools, Monitors) get defined types created, so that you
 can deploy instances of those types. Any configuration it finds will be
 used to generate Classes. For example the Default Monitors are created as
-classes, so you can simply `include brocadevtm::moinitors_simple_http`.
+classes, so you can simply `include pulsevtm::moinitors_simple_http`.
 
 This has the nice side affect that it can also generate classes for any
 default configuration that you want included. For example, you could have 
 a custom class for your FLA key created by simply uploading the FLA key
-prior to running genManifests. Then `include brocadevtm::licenses_myfla`
+prior to running genManifests. Then `include pulsevtm::licenses_myfla`
 
 

@@ -1,4 +1,4 @@
-# === class: brocadevtm::security
+# === class: pulsevtm::security
 #
 # Security Settings
 # Security settings that restrict remote administration for the cluster.
@@ -46,20 +46,20 @@
 #
 # === Examples
 #
-# class {'brocadevtm::security':
+# class {'pulsevtm::security':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-class brocadevtm::security (
+class pulsevtm::security (
   $ensure                   = present,
   $basic__access            = '[]',
   $ssh_intrusion__bantime   = 600,
@@ -69,26 +69,26 @@ class brocadevtm::security (
   $ssh_intrusion__maxretry  = 6,
   $ssh_intrusion__whitelist = '[]',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring security ${name}")
   vtmrest { 'security':
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/security.erb'),
+    content  => template('pulsevtm/security.erb'),
     type     => 'application/json',
     internal => 'security',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

@@ -1,4 +1,4 @@
-# === Define: brocadevtm::pools
+# === Define: pulsevtm::pools
 #
 # Pool
 # The "conf/pools" directory contains configuration files for backend node
@@ -414,20 +414,20 @@
 #
 # === Examples
 #
-# brocadevtm::pools { 'example':
+# pulsevtm::pools { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::pools (
+define pulsevtm::pools (
   $ensure,
   $basic__bandwidth_class                   = undef,
   $basic__failure_pool                      = undef,
@@ -512,26 +512,26 @@ define brocadevtm::pools (
   $udp__accept_from_mask                    = undef,
   $udp__response_timeout                    = 0,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring pools ${name}")
   vtmrest { "pools/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/pools.erb'),
+    content  => template('pulsevtm/pools.erb'),
     type     => 'application/json',
     internal => 'pools',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

@@ -1,4 +1,4 @@
-# === Define: brocadevtm::dns_server_zones
+# === Define: pulsevtm::dns_server_zones
 #
 # DNS Zone
 # The "conf/dnsserver/zones/" file contains zone metadata
@@ -13,7 +13,7 @@
 #
 # === Examples
 #
-# brocadevtm::dns_server_zones { 'example':
+# pulsevtm::dns_server_zones { 'example':
 #     ensure => present,
 #     basic__origin => 'foo'
 #     basic__zonefile => 'foo'
@@ -22,37 +22,37 @@
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::dns_server_zones (
+define pulsevtm::dns_server_zones (
   $ensure,
   $basic__origin,
   $basic__zonefile,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring dns_server_zones ${name}")
   vtmrest { "dns_server/zones/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/dns_server_zones.erb'),
+    content  => template('pulsevtm/dns_server_zones.erb'),
     type     => 'application/json',
     internal => 'dns_server_zones',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

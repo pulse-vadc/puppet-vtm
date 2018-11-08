@@ -1,4 +1,4 @@
-# === Define: brocadevtm::event_types
+# === Define: pulsevtm::event_types
 #
 # Event Type
 # Configuration that ties actions to a set of events that trigger them.
@@ -169,20 +169,20 @@
 #
 # === Examples
 #
-# brocadevtm::event_types { 'example':
+# pulsevtm::event_types { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::event_types (
+define pulsevtm::event_types (
   $ensure,
   $basic__actions               = '[]',
   $basic__built_in              = false,
@@ -217,26 +217,26 @@ define brocadevtm::event_types (
   $zxtms__event_tags            = '[]',
   $zxtms__objects               = '[]',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring event_types ${name}")
   vtmrest { "event_types/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/event_types.erb'),
+    content  => template('pulsevtm/event_types.erb'),
     type     => 'application/json',
     internal => 'event_types',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

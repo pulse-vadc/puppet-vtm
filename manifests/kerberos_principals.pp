@@ -1,4 +1,4 @@
-# === Define: brocadevtm::kerberos_principals
+# === Define: pulsevtm::kerberos_principals
 #
 # Kerberos Principal
 # A Kerberos principal can be used by the traffic manager to participate in a
@@ -30,7 +30,7 @@
 #
 # === Examples
 #
-# brocadevtm::kerberos_principals { 'example':
+# pulsevtm::kerberos_principals { 'example':
 #     ensure => present,
 #     basic__keytab => 'foo'
 #     basic__service => 'foo'
@@ -39,13 +39,13 @@
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::kerberos_principals (
+define pulsevtm::kerberos_principals (
   $ensure,
   $basic__keytab,
   $basic__service,
@@ -53,26 +53,26 @@ define brocadevtm::kerberos_principals (
   $basic__krb5conf = undef,
   $basic__realm    = undef,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring kerberos_principals ${name}")
   vtmrest { "kerberos/principals/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/kerberos_principals.erb'),
+    content  => template('pulsevtm/kerberos_principals.erb'),
     type     => 'application/json',
     internal => 'kerberos_principals',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

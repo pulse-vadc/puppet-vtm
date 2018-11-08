@@ -1,4 +1,4 @@
-# === class: brocadevtm::appliance_nat
+# === class: pulsevtm::appliance_nat
 #
 # NAT Configuration
 # The NAT configuration file stores rules controlling NAT on an appliance.
@@ -49,46 +49,46 @@
 #
 # === Examples
 #
-# class {'brocadevtm::appliance_nat':
+# class {'pulsevtm::appliance_nat':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-class brocadevtm::appliance_nat (
+class pulsevtm::appliance_nat (
   $ensure                         = present,
   $basic__many_to_one_all_ports   = '[]',
   $basic__many_to_one_port_locked = '[]',
   $basic__one_to_one              = '[]',
   $basic__port_mapping            = '[]',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring appliance_nat ${name}")
   vtmrest { 'appliance/nat':
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/appliance_nat.erb'),
+    content  => template('pulsevtm/appliance_nat.erb'),
     type     => 'application/json',
     internal => 'appliance_nat',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

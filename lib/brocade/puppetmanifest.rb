@@ -24,9 +24,9 @@ module BrocadeREST
 			if ( File.exist?(docfile) )
 				documentation = File.read(docfile)
 				if isClass
-					documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","class {'brocadevtm::#{@type_}':")
+					documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","class {'pulsevtm::#{@type_}':")
 				else 
-					documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","brocadevtm::#{@type_} { 'example':")
+					documentation.sub!("<CLASS-OR-TYPE-DECLARATION>","pulsevtm::#{@type_} { 'example':")
 				end
 			elsif (@template != nil)
 				parent = @template.chomp(".erb")
@@ -43,20 +43,20 @@ module BrocadeREST
 			# Built in objects should be classes, while types should get defines.
 			# There is only one Ping monitor, but theyre are lots of monitors
 			if isClass
-				desc = "# === class: brocadevtm::#{@type_}\n"
-				code = "class brocadevtm::#{@type_} (\n"
+				desc = "# === class: pulsevtm::#{@type_}\n"
+				code = "class pulsevtm::#{@type_} (\n"
 				@maxKeyLength >= 6 ? sp = " " * ( @maxKeyLength - 6 ) : sp = " "
 				code += "  \$ensure#{sp} = present,\n"
 			else
-				desc = "# === Define: brocadevtm::#{@type_}\n"
-				code = "define brocadevtm::#{@type_} (\n"
+				desc = "# === Define: pulsevtm::#{@type_}\n"
+				code = "define pulsevtm::#{@type_} (\n"
 				code += "  \$ensure,\n"
 			end
 
 			# content and ensure are the only params for binaries.
 			if @isBinary 
 				if isClass 
-					code += "  \$content = file('brocadevtm/#{@type_}.data'),\n){\n"
+					code += "  \$content = file('pulsevtm/#{@type_}.data'),\n){\n"
 				else
 					code += "  \$content,\n){\n"
 				end
@@ -80,13 +80,13 @@ module BrocadeREST
 			end
 
 			# Our manifests all look the same, include the parent class and it's params
-			code += "  include brocadevtm\n"
-			code += "  $ip              = $brocadevtm::rest_ip\n"
-			code += "  $port            = $brocadevtm::rest_port\n"
-			code += "  $user            = $brocadevtm::rest_user\n"
-			code += "  $pass            = $brocadevtm::rest_pass\n"
-			code += "  $purge           = $brocadevtm::purge\n"
-			code += "  $purge_state_dir = $brocadevtm::purge_state_dir\n\n"
+			code += "  include pulsevtm\n"
+			code += "  $ip              = $pulsevtm::rest_ip\n"
+			code += "  $port            = $pulsevtm::rest_port\n"
+			code += "  $user            = $pulsevtm::rest_user\n"
+			code += "  $pass            = $pulsevtm::rest_pass\n"
+			code += "  $purge           = $pulsevtm::purge\n"
+			code += "  $purge_state_dir = $pulsevtm::purge_state_dir\n\n"
 			code += "  info (\"Configuring #{@type_} ${name}\")\n"
 
 			# Now configure our customer type: vtmrest
@@ -96,7 +96,7 @@ module BrocadeREST
 				code += "  vtmrest { \"#{@type}/\${name}\":\n"
 			end
 			code += "    ensure   => $ensure,\n"
-			code += "    before   => Class[brocadevtm::purge],\n"
+			code += "    before   => Class[pulsevtm::purge],\n"
 			code += "    endpoint => \"https://\${ip}:\${port}/api/tm/#{@restVersion}/config/active\",\n"
 			code += "    username => $user,\n"
 			code += "    password => $pass,\n"
@@ -105,15 +105,15 @@ module BrocadeREST
 				code += "    type     => 'application/octet-stream',\n"
 			else
 				if @template == nil
-					code += "    content  => template('brocadevtm/#{@type_}.erb'),\n"
+					code += "    content  => template('pulsevtm/#{@type_}.erb'),\n"
 				else
-					code += "    content  => template('brocadevtm/#{@template}'),\n"
+					code += "    content  => template('pulsevtm/#{@template}'),\n"
 				end
 				code += "    type     => 'application/json',\n"
 				code += "    internal => '#{@type_}',\n"
-				code += "    failfast => $brocadevtm::failfast,\n"
+				code += "    failfast => $pulsevtm::failfast,\n"
 			end
-			code += "    debug    => $brocadevtm::debug,\n"
+			code += "    debug    => $pulsevtm::debug,\n"
 			code += "  }\n\n"
 
 			# Now the purge section. figure out where this manifest should store it's name if purge
@@ -183,7 +183,7 @@ module BrocadeREST
 			# If I'm binary and a builtin class, then read in my default data
 			if @isBinary
 				if isBuiltin
-					myDataFile = classHash["content"].sub("brocadevtm","#{manifestDir}../files")[7..-4]
+					myDataFile = classHash["content"].sub("pulsevtm","#{manifestDir}../files")[7..-4]
 					if File.exist?(myDataFile) 
 						myData = File.read(myDataFile) 
 					else
@@ -238,20 +238,20 @@ module BrocadeREST
 
 					if (myData != @data) or allParams
 						dataOut = writeBinFile(outfile,binDir)
-						nodefile.puts("\nclass { 'brocadevtm::#{@type_}':\n")
+						nodefile.puts("\nclass { 'pulsevtm::#{@type_}':\n")
 						nodefile.puts("  ensure => present,\n")
 						nodefile.puts("  content => file('#{dataOut}'),\n")
 						nodefile.puts("}\n\n")
 					else
-						nodefile.puts("include brocadevtm::#{@type_}\n")
+						nodefile.puts("include pulsevtm::#{@type_}\n")
 					end
 
 				else
 
 					if @params.empty?
-						nodefile.puts("include brocadevtm::#{@type_}\n")
+						nodefile.puts("include pulsevtm::#{@type_}\n")
 					else
-						nodefile.puts("\nclass { 'brocadevtm::#{@type_}':\n")
+						nodefile.puts("\nclass { 'pulsevtm::#{@type_}':\n")
 						@params.each do |key,value|
 							value = inspectValue(value)
 							sp = " " * ( @maxKeyLength - key.length )
@@ -263,7 +263,7 @@ module BrocadeREST
 				end
 			else
 
-				nodefile.puts("\nbrocadevtm::#{parentFile} { '#{name}':\n")
+				nodefile.puts("\npulsevtm::#{parentFile} { '#{name}':\n")
 				if @isBinary
 						dataOut = writeBinFile(outfile,binDir)
 						nodefile.puts("  ensure => present,\n")
@@ -307,23 +307,23 @@ module BrocadeREST
 								if File.exist?("#{manifestDir}/#{ro_.downcase}_#{item_}.pp")
 									# This is a builtin class
 									if (!builtins)
-										puts("Relationship found for Built-in object: Including: brocadevtm::#{ro_.downcase}_#{item_}")
+										puts("Relationship found for Built-in object: Including: pulsevtm::#{ro_.downcase}_#{item_}")
 										# builtins are disabled, so check and include if needed
 										lines = IO.readlines(outfile)
-										if ( lines.grep(/brocadevtm::#{ro_.downcase}_#{item_}/).empty? )
+										if ( lines.grep(/pulsevtm::#{ro_.downcase}_#{item_}/).empty? )
 											nodefile = File.open(outfile,"a")
-											nodefile.puts("\ninclude brocadevtm::#{ro_.downcase}_#{item_}\n")
+											nodefile.puts("\ninclude pulsevtm::#{ro_.downcase}_#{item_}\n")
 											nodefile.close()
 										end  
 									end
 									ro_[0] = ro_[0].downcase
-									requires += " Class[brocadevtm::#{ro_}_#{item_}], "
+									requires += " Class[pulsevtm::#{ro_}_#{item_}], "
 								else
 									escaped = item.gsub(' ', '%20')
 									if reqObject == "Rules"
 										escaped = escaped.gsub(/^\/{0,1}(.*?)\*{0,1}$/,"\\1")
 									end
-									requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
+									requires += " Pulsevtm::#{reqObject}['#{escaped}'], "
 								end
 							end
 						end
@@ -336,7 +336,7 @@ module BrocadeREST
 							if reqObject == "Rules"
 								escaped = escaped.gsub(/^\/{0,1}(.*?)\*{0,1}$/,"\\1")
 							end
-							requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
+							requires += " Pulsevtm::#{reqObject}['#{escaped}'], "
 						end
 					end
 				end
@@ -379,7 +379,7 @@ module BrocadeREST
 			elsif value.is_a?(Array)
 				value = "'" + JSON.generate(value) + "'"
 			elsif value.is_a?(String)
-				if value.start_with?('[ Brocadevtm::')
+				if value.start_with?('[ Pulsevtm::')
 					value = value.inspect[1...-1] 
 				elsif value.start_with?('[ Class[')
 					value = value.inspect[1...-1] 

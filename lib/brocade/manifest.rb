@@ -236,7 +236,7 @@ module BrocadeREST
 			# If I'm binary and a builtin class, then read in my default data
 			if @isBinary
 				if isBuiltin
-					myDataFile = classHash["content"].sub("brocadevtm","#{manifestDir}../files")[7..-4]
+					myDataFile = classHash["content"].sub("pulsevtm","#{manifestDir}../files")[7..-4]
 					if File.exist?(myDataFile) 
 						myData = File.read(myDataFile) 
 					else
@@ -291,20 +291,20 @@ module BrocadeREST
 
 					if (myData != @data) or allParams
 						dataOut = writeBinFile(outfile,binDir)
-						nodefile.puts("\nclass { 'brocadevtm::#{@type_}':\n")
+						nodefile.puts("\nclass { 'pulsevtm::#{@type_}':\n")
 						nodefile.puts("  ensure => present,\n")
 						nodefile.puts("  content => file('#{dataOut}'),\n")
 						nodefile.puts("}\n\n")
 					else
-						nodefile.puts("include brocadevtm::#{@type_}\n")
+						nodefile.puts("include pulsevtm::#{@type_}\n")
 					end
 
 				else
 
 					if @params.empty?
-						nodefile.puts("include brocadevtm::#{@type_}\n")
+						nodefile.puts("include pulsevtm::#{@type_}\n")
 					else
-						nodefile.puts("\nclass { 'brocadevtm::#{@type_}':\n")
+						nodefile.puts("\nclass { 'pulsevtm::#{@type_}':\n")
 						@params.each do |key,value|
 							value = inspectValue(value)
 							sp = " " * ( @maxKeyLength - key.length )
@@ -316,7 +316,7 @@ module BrocadeREST
 				end
 			else
 
-				nodefile.puts("\nbrocadevtm::#{parentFile} { '#{name}':\n")
+				nodefile.puts("\npulsevtm::#{parentFile} { '#{name}':\n")
 				if @isBinary
 						dataOut = writeBinFile(outfile,binDir)
 						nodefile.puts("  ensure => present,\n")
@@ -360,19 +360,19 @@ module BrocadeREST
 								if File.exist?("#{manifestDir}/#{ro_.downcase}_#{item_}.pp")
 									# This is a builtin class
 									if (!builtins)
-										puts("Relationship found for Built-in object: Including: brocadevtm::#{ro_.downcase}_#{item_}")
+										puts("Relationship found for Built-in object: Including: pulsevtm::#{ro_.downcase}_#{item_}")
 										# builtins are disabled, so check and include if needed
 										lines = IO.readlines(outfile)
-										if ( lines.grep(/brocadevtm::#{ro_.downcase}_#{item_}/).empty? )
+										if ( lines.grep(/pulsevtm::#{ro_.downcase}_#{item_}/).empty? )
 											nodefile = File.open(outfile,"a")
-											nodefile.puts("\ninclude brocadevtm::#{ro_.downcase}_#{item_}\n")
+											nodefile.puts("\ninclude pulsevtm::#{ro_.downcase}_#{item_}\n")
 											nodefile.close()
 										end  
 									end
-									requires += " Class[Brocadevtm::#{ro_}_#{item_}], "
+									requires += " Class[Pulsevtm::#{ro_}_#{item_}], "
 								else
 									escaped = item.gsub(' ', '%20')
-									requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
+									requires += " Pulsevtm::#{reqObject}['#{escaped}'], "
 								end
 							end
 						end
@@ -382,7 +382,7 @@ module BrocadeREST
 						end
 						if req.empty? or ( (!req.empty?) and (!req.include?(@params[reqVar])) )
 							escaped = @params[reqVar].gsub(' ', '%20')
-							requires += " Brocadevtm::#{reqObject}['#{escaped}'], "
+							requires += " Pulsevtm::#{reqObject}['#{escaped}'], "
 						end
 					end
 				end
@@ -444,7 +444,7 @@ module BrocadeREST
 			elsif value.is_a?(Array)
 				value = "'" + JSON.generate(value) + "'"
 			elsif value.is_a?(String)
-				if value.start_with?('[ Brocadevtm::')
+				if value.start_with?('[ Pulsevtm::')
 					value = value.inspect[1...-1] 
 				elsif value.start_with?('[ Class[')
 					value = value.inspect[1...-1] 

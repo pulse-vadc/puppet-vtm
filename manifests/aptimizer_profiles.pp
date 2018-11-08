@@ -1,4 +1,4 @@
-# === Define: brocadevtm::aptimizer_profiles
+# === Define: pulsevtm::aptimizer_profiles
 #
 # Web Accelerator Profile
 # A Web Accelerator profile can be applied to an HTTP virtual server to enable
@@ -30,46 +30,46 @@
 #
 # === Examples
 #
-# brocadevtm::aptimizer_profiles { 'example':
+# pulsevtm::aptimizer_profiles { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::aptimizer_profiles (
+define pulsevtm::aptimizer_profiles (
   $ensure,
   $basic__background_after                   = 0,
   $basic__background_on_additional_resources = false,
   $basic__mode                               = 'active',
   $basic__show_info_bar                      = false,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring aptimizer_profiles ${name}")
   vtmrest { "aptimizer/profiles/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/aptimizer_profiles.erb'),
+    content  => template('pulsevtm/aptimizer_profiles.erb'),
     type     => 'application/json',
     internal => 'aptimizer_profiles',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

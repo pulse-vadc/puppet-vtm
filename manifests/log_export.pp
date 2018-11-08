@@ -1,4 +1,4 @@
-# === Define: brocadevtm::log_export
+# === Define: pulsevtm::log_export
 #
 # Log Export
 # Definitions of log files which should be exported to the analytics engine
@@ -49,20 +49,20 @@
 #
 # === Examples
 #
-# brocadevtm::log_export { 'example':
+# pulsevtm::log_export { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::log_export (
+define pulsevtm::log_export (
   $ensure,
   $basic__appliance_only = false,
   $basic__enabled        = false,
@@ -72,26 +72,26 @@ define brocadevtm::log_export (
   $basic__metadata       = '[]',
   $basic__note           = undef,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring log_export ${name}")
   vtmrest { "log_export/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/log_export.erb'),
+    content  => template('pulsevtm/log_export.erb'),
     type     => 'application/json',
     internal => 'log_export',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

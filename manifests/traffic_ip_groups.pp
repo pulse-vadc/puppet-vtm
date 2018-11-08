@@ -1,4 +1,4 @@
-# === Define: brocadevtm::traffic_ip_groups
+# === Define: pulsevtm::traffic_ip_groups
 #
 # Traffic IP Group
 # Traffic IP groups are sets of IP addresses that are distributed across a
@@ -93,20 +93,20 @@
 #
 # === Examples
 #
-# brocadevtm::traffic_ip_groups { 'example':
+# pulsevtm::traffic_ip_groups { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::traffic_ip_groups (
+define pulsevtm::traffic_ip_groups (
   $ensure,
   $basic__enabled                          = true,
   $basic__hash_source_port                 = false,
@@ -126,26 +126,26 @@ define brocadevtm::traffic_ip_groups (
   $basic__rhi_protocols                    = 'ospf',
   $basic__slaves                           = '[]',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring traffic_ip_groups ${name}")
   vtmrest { "traffic_ip_groups/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/traffic_ip_groups.erb'),
+    content  => template('pulsevtm/traffic_ip_groups.erb'),
     type     => 'application/json',
     internal => 'traffic_ip_groups',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

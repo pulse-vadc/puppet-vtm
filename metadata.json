@@ -1,14 +1,14 @@
 {
-  "name": "tuxinvader-brocadevtm",
+  "name": "pulse-pulsevtm",
   "version": "2.600.1",
   "author": "mbodding @ Pulse Secure",
-  "summary": "Configure and Manage Brocade vTM Application Delivery Controllers",
+  "summary": "Configure and Manage Pulse Secure vTM Application Delivery Controllers",
   "license": "MIT",
-  "source": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
-  "project_page": "https://github.com/TuxInvader/Puppet-Brocade-vTM",
-  "issues_url": "https://github.com/TuxInvader/Puppet-Brocade-vTM/issues",
-  "tags": ["vtm", "vadc", "steelapp", "stingray", "zxtm", "brocade", "zeus", "riverbed",
-           "adc", "loadbalancer", "load balancer"],
+  "source": "https://github.com/pulse-vadc/puppet-vtm",
+  "project_page": "https://github.com/pulse-vadc/puppet-vtm",
+  "issues_url": "https://github.com/pulse-vadc/puppet-vtm/issues",
+  "tags": ["vtm", "vadc", "steelapp", "stingray", "zxtm", "pulse secure", "pulse", "brocade",
+           "zeus", "riverbed", "adc", "loadbalancer", "load balancer"],
     "operatingsystem_support": [
     {
       "operatingsystem": "RedHat",

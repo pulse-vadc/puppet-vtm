@@ -1,4 +1,4 @@
-# === Define: brocadevtm::monitor_scripts
+# === Define: pulsevtm::monitor_scripts
 #
 # Monitor Program
 # An executable program that can be used to by external program monitors to
@@ -8,41 +8,41 @@
 #
 # === Examples
 #
-# brocadevtm::monitor_scripts { 'example':
+# pulsevtm::monitor_scripts { 'example':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::monitor_scripts (
+define pulsevtm::monitor_scripts (
   $ensure,
   $content,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring monitor_scripts ${name}")
   vtmrest { "monitor_scripts/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => $brocadevtm::debug,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

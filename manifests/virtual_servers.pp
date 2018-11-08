@@ -1,4 +1,4 @@
-# === Define: brocadevtm::virtual_servers
+# === Define: pulsevtm::virtual_servers
 #
 # Virtual Server
 # The "conf/vservers" directory contains configuration files that define
@@ -879,7 +879,7 @@
 #
 # === Examples
 #
-# brocadevtm::virtual_servers { 'example':
+# pulsevtm::virtual_servers { 'example':
 #     ensure => present,
 #     basic__pool => 'foo'
 #     basic__port => 8888
@@ -888,13 +888,13 @@
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::virtual_servers (
+define pulsevtm::virtual_servers (
   $ensure,
   $basic__pool,
   $basic__port,
@@ -1065,26 +1065,26 @@ define brocadevtm::virtual_servers (
   $web_cache__max_time                       = 600,
   $web_cache__refresh_time                   = 2,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring virtual_servers ${name}")
   vtmrest { "virtual_servers/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/virtual_servers.erb'),
+    content  => template('pulsevtm/virtual_servers.erb'),
     type     => 'application/json',
     internal => 'virtual_servers',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

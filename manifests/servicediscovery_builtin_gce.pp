@@ -1,27 +1,27 @@
-# === class: brocadevtm::servicediscovery_builtin_gce
+# === class: pulsevtm::servicediscovery_builtin_gce
 
-class brocadevtm::servicediscovery_builtin_gce (
+class pulsevtm::servicediscovery_builtin_gce (
   $ensure  = present,
-  $content = file('brocadevtm/servicediscovery_builtin_gce.data'),
+  $content = file('pulsevtm/servicediscovery_builtin_gce.data'),
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring servicediscovery_builtin_gce ${name}")
   vtmrest { 'servicediscovery/BuiltIn-GCE':
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
     content  => $content,
     type     => 'application/octet-stream',
-    debug    => $brocadevtm::debug,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

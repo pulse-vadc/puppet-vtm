@@ -1,4 +1,4 @@
-# === Define: brocadevtm::ssl_ticket_keys
+# === Define: pulsevtm::ssl_ticket_keys
 #
 # SSL Ticket Key
 # Configuration for SSL ticket encryption keys when managed externally via the
@@ -33,7 +33,7 @@
 #
 # === Examples
 #
-# brocadevtm::ssl_ticket_keys { 'example':
+# pulsevtm::ssl_ticket_keys { 'example':
 #     ensure => present,
 #     basic__id => 'foo'
 #     basic__key => 'foo'
@@ -44,13 +44,13 @@
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::ssl_ticket_keys (
+define pulsevtm::ssl_ticket_keys (
   $ensure,
   $basic__id,
   $basic__key,
@@ -58,26 +58,26 @@ define brocadevtm::ssl_ticket_keys (
   $basic__validity_start,
   $basic__algorithm      = 'aes_256_cbc_hmac_sha256',
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring ssl_ticket_keys ${name}")
   vtmrest { "ssl/ticket_keys/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/ssl_ticket_keys.erb'),
+    content  => template('pulsevtm/ssl_ticket_keys.erb'),
     type     => 'application/json',
     internal => 'ssl_ticket_keys',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

@@ -1,6 +1,6 @@
-# === Class: brocadevtm
+# === Class: pulsevtm
 #
-# This defines the Brocade vTM access information.
+# This defines the Pulse Secure vTM access information.
 #
 # === Parameters
 #
@@ -32,15 +32,15 @@
 #
 # === Examples
 #
-#  class { 'brocadevtm':
+#  class { 'pulsevtm':
 #     rest_user        => 'puppet',
 #     rest_pass        => 'master',
 #     purge            => true,
-#     purge_state_dir  => '/var/run/brocadevtm_state',
+#     purge_state_dir  => '/var/run/pulsevtm_state',
 #  }
 #
 
-class brocadevtm (
+class pulsevtm (
   $rest_user       = undef,
   $rest_pass       = undef,
   $purge_state_dir = undef,
@@ -59,7 +59,7 @@ class brocadevtm (
     fail('You must provide a $rest_pass')
   }
 
-  include brocadevtm::purge
+  include pulsevtm::purge
   if ( $purge ) {
     if ( $purge_state_dir == undef ) {
       fail('You must set a $purge_state_dir if using $purge = true')

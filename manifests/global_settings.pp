@@ -1,4 +1,4 @@
-# === class: brocadevtm::global_settings
+# === class: pulsevtm::global_settings
 #
 # Global Settings
 # General settings that apply to every machine in the cluster.
@@ -1396,20 +1396,20 @@
 #
 # === Examples
 #
-# class {'brocadevtm::global_settings':
+# class {'pulsevtm::global_settings':
 #     ensure => present,
 # }
 #
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-class brocadevtm::global_settings (
+class pulsevtm::global_settings (
   $ensure                                      = present,
   $basic__accepting_delay                      = 50,
   $basic__afm_enabled                          = false,
@@ -1634,26 +1634,26 @@ class brocadevtm::global_settings (
   $web_cache__size                             = '20%',
   $web_cache__verbose                          = false,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring global_settings ${name}")
   vtmrest { 'global_settings':
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/global_settings.erb'),
+    content  => template('pulsevtm/global_settings.erb'),
     type     => 'application/json',
     internal => 'global_settings',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {

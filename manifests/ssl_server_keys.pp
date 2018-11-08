@@ -1,4 +1,4 @@
-# === Define: brocadevtm::ssl_server_keys
+# === Define: pulsevtm::ssl_server_keys
 #
 # SSL Key Pair
 # SSL Server Certificates are presented to clients by virtual servers when SSL
@@ -20,7 +20,7 @@
 #
 # === Examples
 #
-# brocadevtm::ssl_server_keys { 'example':
+# pulsevtm::ssl_server_keys { 'example':
 #     ensure => present,
 #     basic__public => 'foo'
 #     basic__request => 'foo'
@@ -31,39 +31,39 @@
 #
 # === Authors
 #
-# Mark Boddington <mbodding@brocade>
+#  Pulse Secure <puppet-vadc@pulsesecure.net>
 #
 # === Copyright
 #
-# Copyright 2015 Brocade
+# Copyright 2018 Pulse Secure
 #
-define brocadevtm::ssl_server_keys (
+define pulsevtm::ssl_server_keys (
   $ensure,
   $basic__public,
   $basic__private,
   $basic__note    = undef,
   $basic__request = undef,
 ){
-  include brocadevtm
-  $ip              = $brocadevtm::rest_ip
-  $port            = $brocadevtm::rest_port
-  $user            = $brocadevtm::rest_user
-  $pass            = $brocadevtm::rest_pass
-  $purge           = $brocadevtm::purge
-  $purge_state_dir = $brocadevtm::purge_state_dir
+  include pulsevtm
+  $ip              = $pulsevtm::rest_ip
+  $port            = $pulsevtm::rest_port
+  $user            = $pulsevtm::rest_user
+  $pass            = $pulsevtm::rest_pass
+  $purge           = $pulsevtm::purge
+  $purge_state_dir = $pulsevtm::purge_state_dir
 
   info ("Configuring ssl_server_keys ${name}")
   vtmrest { "ssl/server_keys/${name}":
     ensure   => $ensure,
-    before   => Class[brocadevtm::purge],
+    before   => Class[pulsevtm::purge],
     endpoint => "https://${ip}:${port}/api/tm/6.0/config/active",
     username => $user,
     password => $pass,
-    content  => template('brocadevtm/ssl_server_keys.erb'),
+    content  => template('pulsevtm/ssl_server_keys.erb'),
     type     => 'application/json',
     internal => 'ssl_server_keys',
-    failfast => $brocadevtm::failfast,
-    debug    => $brocadevtm::debug,
+    failfast => $pulsevtm::failfast,
+    debug    => $pulsevtm::debug,
   }
 
   if ( $purge ) {
